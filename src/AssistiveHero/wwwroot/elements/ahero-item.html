@@ -1,0 +1,82 @@
+﻿<link rel="import" href="/lib/polymer/polymer.html">
+<link rel="import" href="/lib/paper-material/paper-material.html">
+<link rel="import" href="/lib/iron-image/iron-image.html">
+<link rel="import" href="/lib/paper-ripple/paper-ripple.html">
+
+<dom-module id="ahero-item">
+    <template>
+        <style>
+            paper-material {
+                background: white;
+                box-sizing: border-box;
+                margin: 8px;
+                padding: 2px;
+                border-radius: 2px;
+            }
+            iron-image {
+                width: 300px;
+                height: 300px;
+            }
+        </style>
+        <paper-material elevation="2" on-click="tap">
+            <iron-image sizing="cover" src="[[imgsrc]]"></iron-image>
+            <paper-ripple noink="{{disabled}}"></paper-ripple>
+        </paper-material>
+        <audio id="aud" src="/Play/[[text]]" type="audio/wav" preload="auto"></audio>
+    </template>
+    <script>
+        (function () {
+            Polymer({
+                is: 'ahero-item',
+                properties: {
+                    url: {
+                        type: String
+                    },
+                    text: {
+                        type: String
+                    },
+                    disabled: {
+                        type: Boolean
+                    },
+                    index: {
+                        type: Number
+                    },
+                    imgsrc: {
+                        type: String,
+                        computed: 'getimgsrc(url, disabled)'
+                    }
+                },
+                tap: function () {
+                    var that = this;
+
+                    if (this.$.aud.onended == null)
+                    {
+                        this.$.aud.onended = function () {
+                            if (!that.disabled) {
+                                that.fire("tapped", {
+                                    index: that.index
+                                });
+                            }
+                        };
+                    }
+                    if (!that.disabled) {
+                        this.$.aud.play();
+                    }
+                },
+                getimgsrc: function (url, dis) {
+                    return url.toString().replace('.', (dis ? "_g." : "."));
+                }
+            });
+        })();
+    </script>
+</dom-module>
+
+
+
+
+
+
+
+
+
+
